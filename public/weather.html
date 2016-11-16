@@ -1,0 +1,1866 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="css/bootstrap.min.css">
+        <link href='https://fonts.googleapis.com/css?family=Merriweather' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="css/styles.css">
+        <script src="js/jquery-2.1.4.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+        <script src="js/jquery.validate.js"></script>
+        <script src="http://openlayers.org/api/OpenLayers.js"></script>
+        <script src="js/scripts.js"></script>
+        <title>Weather Forecast</title>
+    </head>
+    <body>
+    <script>
+    </script>
+    <div class="search container">
+        <section class="col-xs-12">
+            <center><h1>Forecast Search</h1></center>
+        </section>
+        <div class="row">
+            <section class="searchForm col-xs-12">
+                <form id="myForm" method="GET" action="">
+                     <div class="form-group col-xs-12 col-lg-3">
+                         <label for="streetAddress">Street Address:<span class="star">*</span></label>
+                         <input class="form-control" type="text" id="streetAddress" name="streetAddress" placeholder="Enter street address">
+                     </div>
+                     <div class="form-group col-xs-12 col-lg-2">
+                         <label for="cities">City:<span class="star">*</span></label>
+                         <input class="form-control" type="text" id="cities" name="cities" placeholder="Enter the city name">
+                     </div>
+                     <div class="form-group col-xs-12 col-lg-2">
+                         <label for="states">State:<span class="star">*</span></label>
+                         <select class="form-control" id="states" name="states">
+                             <option value="default">Select your state...</option>
+                             <option value="AZ">Arizona</option>
+                             <option value="AR">Arkansas</option>
+                             <option value="CA">California</option>
+                             <option value="CO">Colorado</option>
+                             <option value="CT">Connecticut</option>
+                             <option value="DE">Delaware</option>
+                             <option value="DC">District of Columbia</option>
+                             <option value="FL">Florida</option>
+                             <option value="GA">Georgia</option>
+                             <option value="HI">Hawaii</option>
+                             <option value="ID">Idaho</option>
+                             <option value="IL">Illinois</option>
+                             <option value="IN">Indiana</option>
+                             <option value="IA">Iowa</option>
+                             <option value="KS">Kansas</option>
+                             <option value="KY">Kentucky</option>
+                             <option value="LA">Louisiana</option>
+                             <option value="ME">Maine</option>
+                             <option value="MD">Maryland</option>
+                             <option value="MA">Massachusetts</option>
+                             <option value="MI">Michigan</option>
+                             <option value="MN">Minnesota</option>
+                             <option value="MS">Mississippi</option>
+                             <option value="MO">Missouri</option>
+                             <option value="MT">Montana</option>
+                             <option value="NE">Nebraska</option>
+                             <option value="NV">Nevada</option>
+                             <option value="NH">New Hampshire</option>
+                             <option value="NJ">New Jersey</option>
+                             <option value="NM">New Mexico</option>
+                             <option value="NY">New York</option>
+                             <option value="NC">North Carolina</option>
+                             <option value="ND">North Dakota</option>
+                             <option value="OH">Ohio</option>
+                             <option value="OK">Oklahoma</option>
+                             <option value="OR">Oregon</option>
+                             <option value="PA">Pennsylvania</option>
+                             <option value="RI">Rhode Island</option>
+                             <option value="SC">South Carolina</option>
+                             <option value="SD">South Dakota</option>
+                             <option value="TN">Tennessee</option>
+                             <option value="TX">Texas</option>
+                             <option value="UT">Utah</option>
+                             <option value="VT">Vermont</option>
+                             <option value="VA">Virginia</option>
+                             <option value="WA">Washington</option>
+                             <option value="WV">West Virginia</option>
+                             <option value="WI">Wisconsin</option>
+                             <option value="WY">Wyoming</option>
+                        </select> 
+                     </div>
+                     <div class="form-group col-xs-12 col-lg-2">
+                         <label>Degree:<span class="star">*</span></label>
+                             <div class="radio">
+                             <label><input name="degree" type="radio" value="us" checked>Fahranheit</label>
+                             <label><input name="degree" type="radio" value="si">Celsius</label>
+                             </div>
+                     </div>
+                     <div id="buttons" class="form-group col-xs-12 col-lg-3">
+                         <button id="search" type="submit" class="btn btn-primary">
+                         <span class="glyphicon glyphicon-search" aria-hidden="true"></span> Search</button>
+                         <button id="clear" type="reset" class="btn btn-default">
+                         <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>&nbsp;&nbsp;&nbsp;Clear</button>
+                     </div>
+                     <div id="sponsor" class="form-group col-xs-12">Powered by:<a href="http://forecast.io"><img id="img1" src="/public/images/logo1.png"></a></div>
+                </form>
+            </section>
+        </div>
+    </div>
+    <div class="result container">
+    <div class="row">
+    <section class="col-xs-12">
+        <ul class="nav nav-tabs" role="tablist">
+            <li id="tab1" role="presentation" class="active">
+                <a role="tab" data-toggle="tab" href="#rightnow">Right Now</a>
+            </li>
+            <li id="tab2" role="presentation">
+            <a role="tab" data-toggle="tab" href="#nexth">Next 24 Hours</a>
+            </li>
+            <li id="tab3" role="presentation">
+            <a role="tab" data-toggle="tab" href="#nextd">Next 7 Days</a>
+            </li>
+        </ul>
+        <div class="tab-content">
+            <div role="tabpanel" class="tab-pane active" id="rightnow">
+            <section id="leftsection" class="nowtable col-xs-12 col-sm-6">
+            <div class="currentsection col-xs-12">
+            <div id="currenticon" class="col-xs-12 col-sm-6">
+            </div>
+            <div id="currentsum" class="col-xs-12 col-sm-6">
+                <p id="summary"></p>
+                <div>
+                    <div id="temperature" class="col-xs-4 col-xs-offset-3"></div>
+                    <div id="tempdegree" class="col-xs-4"></div>
+                </div>
+                <p id="hlfb" class="col-xs-12"><span id="low"></span> | <span id="high"></span>
+                <img src="/public/images/fb_icon.png" title="facebook" alt="facebook" id="fblg" width="35px" height="35px">
+                </p>
+            </div>
+            </div>
+            <table class="table table-striped">
+            <tbody>
+              <tr>
+                <td>Precipitation</td>
+                <td id="precipitation"></td>
+              </tr>
+              <tr class="danger">
+                <td>Chance of Rain</td>
+                <td id="rainchance"></td>
+              </tr>
+              <tr>
+                <td>Wind Speed</td>
+                <td id="windspeed"></td>
+              </tr>
+              <tr class="danger">
+                <td>Dew Point</td>
+                <td id="dewpoint"></td>
+              </tr>
+              <tr>
+                <td>Humidity</td>
+                <td id="humidity"></td>
+              </tr>
+              <tr class="danger">
+                <td>Visibility</td>
+                <td id="visibility"></td>
+              </tr>
+              <tr>
+                <td>Sunrise</td>
+                <td id="sunrise"></td>
+              </tr>
+              <tr class="danger">
+                <td>Sunset</td>
+                <td id="sunset"></td>
+              </tr>
+            </tbody>
+            </table>
+            </section>
+            <section class="nowtable col-xs-12 col-sm-6">
+            <div id="cloudMap"></div>
+            </section>
+            </div>
+            <div role="tabpanel" class="tab-pane" id="nexth">
+            <table class="tableset table" id="tablehead">
+             <tbody>
+              <tr>
+                <td>Time</td>
+                <td>Summary</td>
+                <td>Cloud Cover</td>
+                <td id="tab2temph"></td>
+                <td>View Details</td>
+              </tr>
+              </tbody>
+            </table>
+            <div class="panel-group">
+                <div class="panel panel-default" id="next1">
+                    <div class="panelH panel-heading" id="hOne">
+                        <table class="tableset table">
+                            <tbody>
+                                <tr>
+                                    <td class="nTime"></td>
+                                    <td class="nIcon"></td>
+                                    <td class="nCloud"></td>
+                                    <td class="nTemp"></td>
+                                    <td><a href="#hour1" data-toggle="collapse" data-parent="next1" aria-expanded="false" aria-controls="hour1">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                        </a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="panel-collapse collapse" id="hour1" arialabelledby="hOne">
+                    <div class="panel-body">
+                        <div class="table-responsive">
+                           <table class="table">
+                                <thead class="tablehead">
+                                    <tr>
+                                        <th>Wind</th>
+                                        <th>Humidity</th>
+                                        <th>Visibility</th>
+                                        <th>Pressure</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="nWind"></td>
+                                        <td class="nHum"></td>
+                                        <td class="nVis"></td>
+                                        <td class="nPre"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>  
+                    </div>
+                </div>
+            </div>
+            <div class="panel-group">
+                <div class="panel panel-default" id="next2">
+                    <div class="panelH panel-heading" id="hTwo">
+                        <table class="tableset table">
+                            <tbody>
+                                <tr>
+                                    <td class="nTime"></td>
+                                    <td class="nIcon"></td>
+                                    <td class="nCloud"></td>
+                                    <td class="nTemp"></td>
+                                    <td><a href="#hour2" data-toggle="collapse" data-parent="next2" aria-expanded="false" aria-controls="hour2">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                        </a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="panel-collapse collapse" id="hour2" arialabelledby="hTwo">
+                    <div class="panel-body">
+                        <div class="table-responsive">
+                           <table class="table">
+                                <thead class="tablehead">
+                                    <tr>
+                                        <th>Wind</th>
+                                        <th>Humidity</th>
+                                        <th>Visibility</th>
+                                        <th>Pressure</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="nWind"></td>
+                                        <td class="nHum"></td>
+                                        <td class="nVis"></td>
+                                        <td class="nPre"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>  
+                    </div>
+                </div>
+            </div>
+            <div class="panel-group">
+                <div class="panel panel-default" id="next3">
+                    <div class="panelH panel-heading" id="hThree">
+                        <table class="tableset table">
+                            <tbody>
+                                <tr>
+                                    <td class="nTime"></td>
+                                    <td class="nIcon"></td>
+                                    <td class="nCloud"></td>
+                                    <td class="nTemp"></td>
+                                    <td><a href="#hour3" data-toggle="collapse" data-parent="next3" aria-expanded="false" aria-controls="hour3">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                        </a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="panel-collapse collapse" id="hour3" arialabelledby="hThree">
+                    <div class="panel-body">
+                        <div class="table-responsive">
+                           <table class="table">
+                                <thead class="tablehead">
+                                    <tr>
+                                        <th>Wind</th>
+                                        <th>Humidity</th>
+                                        <th>Visibility</th>
+                                        <th>Pressure</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="nWind"></td>
+                                        <td class="nHum"></td>
+                                        <td class="nVis"></td>
+                                        <td class="nPre"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>  
+                    </div>
+                </div>
+            </div>
+            <div class="panel-group">
+                <div class="panel panel-default" id="next4">
+                    <div class="panelH panel-heading" id="hFour">
+                        <table class="tableset table">
+                            <tbody>
+                                <tr>
+                                    <td class="nTime"></td>
+                                    <td class="nIcon"></td>
+                                    <td class="nCloud"></td>
+                                    <td class="nTemp"></td>
+                                    <td><a href="#hour4" data-toggle="collapse" data-parent="next4" aria-expanded="false" aria-controls="hour4">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                        </a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="panel-collapse collapse" id="hour4" arialabelledby="hFour">
+                    <div class="panel-body">
+                        <div class="table-responsive">
+                           <table class="table">
+                                <thead class="tablehead">
+                                    <tr>
+                                        <th>Wind</th>
+                                        <th>Humidity</th>
+                                        <th>Visibility</th>
+                                        <th>Pressure</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="nWind"></td>
+                                        <td class="nHum"></td>
+                                        <td class="nVis"></td>
+                                        <td class="nPre"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>  
+                    </div>
+                </div>
+            </div>
+            <div class="panel-group">
+                <div class="panel panel-default" id="next5">
+                    <div class="panelH panel-heading" id="hFive">
+                        <table class="tableset table">
+                            <tbody>
+                                <tr>
+                                    <td class="nTime"></td>
+                                    <td class="nIcon"></td>
+                                    <td class="nCloud"></td>
+                                    <td class="nTemp"></td>
+                                    <td><a href="#hour5" data-toggle="collapse" data-parent="next5" aria-expanded="false" aria-controls="hour5">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                        </a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="panel-collapse collapse" id="hour5" arialabelledby="hFive">
+                    <div class="panel-body">
+                        <div class="table-responsive">
+                           <table class="table">
+                                <thead class="tablehead">
+                                    <tr>
+                                        <th>Wind</th>
+                                        <th>Humidity</th>
+                                        <th>Visibility</th>
+                                        <th>Pressure</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="nWind"></td>
+                                        <td class="nHum"></td>
+                                        <td class="nVis"></td>
+                                        <td class="nPre"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>  
+                    </div>
+                </div>
+            </div>
+            <div class="panel-group">
+                <div class="panel panel-default" id="next6">
+                    <div class="panelH panel-heading" id="hSix">
+                        <table class="tableset table">
+                            <tbody>
+                                <tr>
+                                    <td class="nTime"></td>
+                                    <td class="nIcon"></td>
+                                    <td class="nCloud"></td>
+                                    <td class="nTemp"></td>
+                                    <td><a href="#hour6" data-toggle="collapse" data-parent="next6" aria-expanded="false" aria-controls="hour6">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                        </a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="panel-collapse collapse" id="hour6" arialabelledby="hSix">
+                    <div class="panel-body">
+                        <div class="table-responsive">
+                           <table class="table">
+                                <thead class="tablehead">
+                                    <tr>
+                                        <th>Wind</th>
+                                        <th>Humidity</th>
+                                        <th>Visibility</th>
+                                        <th>Pressure</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="nWind"></td>
+                                        <td class="nHum"></td>
+                                        <td class="nVis"></td>
+                                        <td class="nPre"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>  
+                    </div>
+                </div>
+            </div>
+            <div class="panel-group">
+                <div class="panel panel-default" id="next7">
+                    <div class="panelH panel-heading" id="hSeven">
+                        <table class="tableset table">
+                            <tbody>
+                                <tr>
+                                    <td class="nTime"></td>
+                                    <td class="nIcon"></td>
+                                    <td class="nCloud"></td>
+                                    <td class="nTemp"></td>
+                                    <td><a href="#hour7" data-toggle="collapse" data-parent="next7" aria-expanded="false" aria-controls="hour7">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                        </a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="panel-collapse collapse" id="hour7" arialabelledby="hSeven">
+                    <div class="panel-body">
+                        <div class="table-responsive">
+                           <table class="table">
+                                <thead class="tablehead">
+                                    <tr>
+                                        <th>Wind</th>
+                                        <th>Humidity</th>
+                                        <th>Visibility</th>
+                                        <th>Pressure</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="nWind"></td>
+                                        <td class="nHum"></td>
+                                        <td class="nVis"></td>
+                                        <td class="nPre"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>  
+                    </div>
+                </div>
+            </div>
+            <div class="panel-group">
+                <div class="panel panel-default" id="next8">
+                    <div class="panelH panel-heading" id="hEight">
+                        <table class="tableset table">
+                            <tbody>
+                                <tr>
+                                    <td class="nTime"></td>
+                                    <td class="nIcon"></td>
+                                    <td class="nCloud"></td>
+                                    <td class="nTemp"></td>
+                                    <td><a href="#hour8" data-toggle="collapse" data-parent="next8" aria-expanded="false" aria-controls="hour8">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                        </a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="panel-collapse collapse" id="hour8" arialabelledby="hEight">
+                    <div class="panel-body">
+                        <div class="table-responsive">
+                           <table class="table">
+                                <thead class="tablehead">
+                                    <tr>
+                                        <th>Wind</th>
+                                        <th>Humidity</th>
+                                        <th>Visibility</th>
+                                        <th>Pressure</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="nWind"></td>
+                                        <td class="nHum"></td>
+                                        <td class="nVis"></td>
+                                        <td class="nPre"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>  
+                    </div>
+                </div>
+            </div>
+            <div class="panel-group">
+                <div class="panel panel-default" id="next9">
+                    <div class="panelH panel-heading" id="hNine">
+                        <table class="tableset table">
+                            <tbody>
+                                <tr>
+                                    <td class="nTime"></td>
+                                    <td class="nIcon"></td>
+                                    <td class="nCloud"></td>
+                                    <td class="nTemp"></td>
+                                    <td><a href="#hour9" data-toggle="collapse" data-parent="next9" aria-expanded="false" aria-controls="hour9">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                        </a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="panel-collapse collapse" id="hour9" arialabelledby="hNine">
+                    <div class="panel-body">
+                        <div class="table-responsive">
+                           <table class="table">
+                                <thead class="tablehead">
+                                    <tr>
+                                        <th>Wind</th>
+                                        <th>Humidity</th>
+                                        <th>Visibility</th>
+                                        <th>Pressure</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="nWind"></td>
+                                        <td class="nHum"></td>
+                                        <td class="nVis"></td>
+                                        <td class="nPre"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>  
+                    </div>
+                </div>
+            </div>
+            <div class="panel-group">
+                <div class="panel panel-default" id="next10">
+                    <div class="panelH panel-heading" id="hTen">
+                        <table class="tableset table">
+                            <tbody>
+                                <tr>
+                                    <td class="nTime"></td>
+                                    <td class="nIcon"></td>
+                                    <td class="nCloud"></td>
+                                    <td class="nTemp"></td>
+                                    <td><a href="#hour10" data-toggle="collapse" data-parent="next10" aria-expanded="false" aria-controls="hour10">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                        </a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="panel-collapse collapse" id="hour10" arialabelledby="hTen">
+                    <div class="panel-body">
+                        <div class="table-responsive">
+                           <table class="table">
+                                <thead class="tablehead">
+                                    <tr>
+                                        <th>Wind</th>
+                                        <th>Humidity</th>
+                                        <th>Visibility</th>
+                                        <th>Pressure</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="nWind"></td>
+                                        <td class="nHum"></td>
+                                        <td class="nVis"></td>
+                                        <td class="nPre"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>  
+                    </div>
+                </div>
+            </div>
+            <div class="panel-group">
+                <div class="panel panel-default" id="next11">
+                    <div class="panelH panel-heading" id="hEleven">
+                        <table class="tableset table">
+                            <tbody>
+                                <tr>
+                                    <td class="nTime"></td>
+                                    <td class="nIcon"></td>
+                                    <td class="nCloud"></td>
+                                    <td class="nTemp"></td>
+                                    <td><a href="#hour11" data-toggle="collapse" data-parent="next11" aria-expanded="false" aria-controls="hour11">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                        </a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="panel-collapse collapse" id="hour11" arialabelledby="hEleven">
+                    <div class="panel-body">
+                        <div class="table-responsive">
+                           <table class="table">
+                                <thead class="tablehead">
+                                    <tr>
+                                        <th>Wind</th>
+                                        <th>Humidity</th>
+                                        <th>Visibility</th>
+                                        <th>Pressure</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="nWind"></td>
+                                        <td class="nHum"></td>
+                                        <td class="nVis"></td>
+                                        <td class="nPre"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>  
+                    </div>
+                </div>
+            </div>
+            <div class="panel-group">
+                <div class="panel panel-default" id="next12">
+                    <div class="panelH panel-heading" id="hTwelve">
+                        <table class="tableset table">
+                            <tbody>
+                                <tr>
+                                    <td class="nTime"></td>
+                                    <td class="nIcon"></td>
+                                    <td class="nCloud"></td>
+                                    <td class="nTemp"></td>
+                                    <td><a href="#hour12" data-toggle="collapse" data-parent="next12" aria-expanded="false" aria-controls="hour12">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                        </a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="panel-collapse collapse" id="hour12" arialabelledby="hTwelve">
+                    <div class="panel-body">
+                        <div class="table-responsive">
+                           <table class="table">
+                                <thead class="tablehead">
+                                    <tr>
+                                        <th>Wind</th>
+                                        <th>Humidity</th>
+                                        <th>Visibility</th>
+                                        <th>Pressure</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="nWind"></td>
+                                        <td class="nHum"></td>
+                                        <td class="nVis"></td>
+                                        <td class="nPre"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>  
+                    </div>
+                </div>
+            </div>
+            <div class="panel-group">
+                <div class="panel panel-default" id="next13">
+                    <div class="panelH panel-heading" id="hThirteen">
+                        <table class="tableset table">
+                            <tbody>
+                                <tr>
+                                    <td class="nTime"></td>
+                                    <td class="nIcon"></td>
+                                    <td class="nCloud"></td>
+                                    <td class="nTemp"></td>
+                                    <td><a href="#hour13" data-toggle="collapse" data-parent="next13" aria-expanded="false" aria-controls="hour13">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                        </a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="panel-collapse collapse" id="hour13" arialabelledby="hThirteen">
+                    <div class="panel-body">
+                        <div class="table-responsive">
+                           <table class="table">
+                                <thead class="tablehead">
+                                    <tr>
+                                        <th>Wind</th>
+                                        <th>Humidity</th>
+                                        <th>Visibility</th>
+                                        <th>Pressure</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="nWind"></td>
+                                        <td class="nHum"></td>
+                                        <td class="nVis"></td>
+                                        <td class="nPre"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>  
+                    </div>
+                </div>
+            </div>
+            <div class="panel-group">
+                <div class="panel panel-default" id="next14">
+                    <div class="panelH panel-heading" id="hFourteen">
+                        <table class="tableset table">
+                            <tbody>
+                                <tr>
+                                    <td class="nTime"></td>
+                                    <td class="nIcon"></td>
+                                    <td class="nCloud"></td>
+                                    <td class="nTemp"></td>
+                                    <td><a href="#hour14" data-toggle="collapse" data-parent="next14" aria-expanded="false" aria-controls="hour14">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                        </a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="panel-collapse collapse" id="hour14" arialabelledby="hFourteen">
+                    <div class="panel-body">
+                        <div class="table-responsive">
+                           <table class="table">
+                                <thead class="tablehead">
+                                    <tr>
+                                        <th>Wind</th>
+                                        <th>Humidity</th>
+                                        <th>Visibility</th>
+                                        <th>Pressure</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="nWind"></td>
+                                        <td class="nHum"></td>
+                                        <td class="nVis"></td>
+                                        <td class="nPre"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>  
+                    </div>
+                </div>
+            </div>
+            <div class="panel-group">
+                <div class="panel panel-default" id="next15">
+                    <div class="panelH panel-heading" id="hFifteen">
+                        <table class="tableset table">
+                            <tbody>
+                                <tr>
+                                    <td class="nTime"></td>
+                                    <td class="nIcon"></td>
+                                    <td class="nCloud"></td>
+                                    <td class="nTemp"></td>
+                                    <td><a href="#hour15" data-toggle="collapse" data-parent="next15" aria-expanded="false" aria-controls="hour15">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                        </a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="panel-collapse collapse" id="hour15" arialabelledby="hFifteen">
+                    <div class="panel-body">
+                        <div class="table-responsive">
+                           <table class="table">
+                                <thead class="tablehead">
+                                    <tr>
+                                        <th>Wind</th>
+                                        <th>Humidity</th>
+                                        <th>Visibility</th>
+                                        <th>Pressure</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="nWind"></td>
+                                        <td class="nHum"></td>
+                                        <td class="nVis"></td>
+                                        <td class="nPre"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>  
+                    </div>
+                </div>
+            </div>
+            <div class="panel-group">
+                <div class="panel panel-default" id="next16">
+                    <div class="panelH panel-heading" id="hSixteen">
+                        <table class="tableset table">
+                            <tbody>
+                                <tr>
+                                    <td class="nTime"></td>
+                                    <td class="nIcon"></td>
+                                    <td class="nCloud"></td>
+                                    <td class="nTemp"></td>
+                                    <td><a href="#hour16" data-toggle="collapse" data-parent="next16" aria-expanded="false" aria-controls="hour16">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                        </a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="panel-collapse collapse" id="hour16" arialabelledby="hSixteen">
+                    <div class="panel-body">
+                        <div class="table-responsive">
+                           <table class="table">
+                                <thead class="tablehead">
+                                    <tr>
+                                        <th>Wind</th>
+                                        <th>Humidity</th>
+                                        <th>Visibility</th>
+                                        <th>Pressure</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="nWind"></td>
+                                        <td class="nHum"></td>
+                                        <td class="nVis"></td>
+                                        <td class="nPre"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>  
+                    </div>
+                </div>
+            </div>
+            <div class="panel-group">
+                <div class="panel panel-default" id="next17">
+                    <div class="panelH panel-heading" id="hSeventeen">
+                        <table class="tableset table">
+                            <tbody>
+                                <tr>
+                                    <td class="nTime"></td>
+                                    <td class="nIcon"></td>
+                                    <td class="nCloud"></td>
+                                    <td class="nTemp"></td>
+                                    <td><a href="#hour17" data-toggle="collapse" data-parent="next17" aria-expanded="false" aria-controls="hour17">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                        </a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="panel-collapse collapse" id="hour17" arialabelledby="hSeventeen">
+                    <div class="panel-body">
+                        <div class="table-responsive">
+                           <table class="table">
+                                <thead class="tablehead">
+                                    <tr>
+                                        <th>Wind</th>
+                                        <th>Humidity</th>
+                                        <th>Visibility</th>
+                                        <th>Pressure</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="nWind"></td>
+                                        <td class="nHum"></td>
+                                        <td class="nVis"></td>
+                                        <td class="nPre"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>  
+                    </div>
+                </div>
+            </div>
+            <div class="panel-group">
+                <div class="panel panel-default" id="next18">
+                    <div class="panelH panel-heading" id="hEighteen">
+                        <table class="tableset table">
+                            <tbody>
+                                <tr>
+                                    <td class="nTime"></td>
+                                    <td class="nIcon"></td>
+                                    <td class="nCloud"></td>
+                                    <td class="nTemp"></td>
+                                    <td><a href="#hour18" data-toggle="collapse" data-parent="next18" aria-expanded="false" aria-controls="hour18">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                        </a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="panel-collapse collapse" id="hour18" arialabelledby="hEighteen">
+                    <div class="panel-body">
+                        <div class="table-responsive">
+                           <table class="table">
+                                <thead class="tablehead">
+                                    <tr>
+                                        <th>Wind</th>
+                                        <th>Humidity</th>
+                                        <th>Visibility</th>
+                                        <th>Pressure</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="nWind"></td>
+                                        <td class="nHum"></td>
+                                        <td class="nVis"></td>
+                                        <td class="nPre"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>  
+                    </div>
+                </div>
+            </div>
+            <div class="panel-group">
+                <div class="panel panel-default" id="next19">
+                    <div class="panelH panel-heading" id="hNineteen">
+                        <table class="tableset table">
+                            <tbody>
+                                <tr>
+                                    <td class="nTime"></td>
+                                    <td class="nIcon"></td>
+                                    <td class="nCloud"></td>
+                                    <td class="nTemp"></td>
+                                    <td><a href="#hour19" data-toggle="collapse" data-parent="next19" aria-expanded="false" aria-controls="hour19">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                        </a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="panel-collapse collapse" id="hour19" arialabelledby="hNineteen">
+                    <div class="panel-body">
+                        <div class="table-responsive">
+                           <table class="table">
+                                <thead class="tablehead">
+                                    <tr>
+                                        <th>Wind</th>
+                                        <th>Humidity</th>
+                                        <th>Visibility</th>
+                                        <th>Pressure</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="nWind"></td>
+                                        <td class="nHum"></td>
+                                        <td class="nVis"></td>
+                                        <td class="nPre"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>  
+                    </div>
+                </div>
+            </div>
+            <div class="panel-group">
+                <div class="panel panel-default" id="next20">
+                    <div class="panelH panel-heading" id="hTwenty">
+                        <table class="tableset table">
+                            <tbody>
+                                <tr>
+                                    <td class="nTime"></td>
+                                    <td class="nIcon"></td>
+                                    <td class="nCloud"></td>
+                                    <td class="nTemp"></td>
+                                    <td><a href="#hour20" data-toggle="collapse" data-parent="next20" aria-expanded="false" aria-controls="hour20">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                        </a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="panel-collapse collapse" id="hour20" arialabelledby="hTwenty">
+                    <div class="panel-body">
+                        <div class="table-responsive">
+                           <table class="table">
+                                <thead class="tablehead">
+                                    <tr>
+                                        <th>Wind</th>
+                                        <th>Humidity</th>
+                                        <th>Visibility</th>
+                                        <th>Pressure</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="nWind"></td>
+                                        <td class="nHum"></td>
+                                        <td class="nVis"></td>
+                                        <td class="nPre"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>  
+                    </div>
+                </div>
+            </div>
+            <div class="panel-group">
+                <div class="panel panel-default" id="next21">
+                    <div class="panelH panel-heading" id="hTwenty1">
+                        <table class="tableset table">
+                            <tbody>
+                                <tr>
+                                    <td class="nTime"></td>
+                                    <td class="nIcon"></td>
+                                    <td class="nCloud"></td>
+                                    <td class="nTemp"></td>
+                                    <td><a href="#hour21" data-toggle="collapse" data-parent="next21" aria-expanded="false" aria-controls="hour21">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                        </a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="panel-collapse collapse" id="hour21" arialabelledby="hTwenty1">
+                    <div class="panel-body">
+                        <div class="table-responsive">
+                           <table class="table">
+                                <thead class="tablehead">
+                                    <tr>
+                                        <th>Wind</th>
+                                        <th>Humidity</th>
+                                        <th>Visibility</th>
+                                        <th>Pressure</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="nWind"></td>
+                                        <td class="nHum"></td>
+                                        <td class="nVis"></td>
+                                        <td class="nPre"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>  
+                    </div>
+                </div>
+            </div>
+            <div class="panel-group">
+                <div class="panel panel-default" id="next22">
+                    <div class="panelH panel-heading" id="hTwenty2">
+                        <table class="tableset table">
+                            <tbody>
+                                <tr>
+                                    <td class="nTime"></td>
+                                    <td class="nIcon"></td>
+                                    <td class="nCloud"></td>
+                                    <td class="nTemp"></td>
+                                    <td><a href="#hour22" data-toggle="collapse" data-parent="next22" aria-expanded="false" aria-controls="hour22">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                        </a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="panel-collapse collapse" id="hour22" arialabelledby="hTwenty2">
+                    <div class="panel-body">
+                        <div class="table-responsive">
+                           <table class="table">
+                                <thead class="tablehead">
+                                    <tr>
+                                        <th>Wind</th>
+                                        <th>Humidity</th>
+                                        <th>Visibility</th>
+                                        <th>Pressure</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="nWind"></td>
+                                        <td class="nHum"></td>
+                                        <td class="nVis"></td>
+                                        <td class="nPre"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>  
+                    </div>
+                </div>
+            </div>
+            <div class="panel-group">
+                <div class="panel panel-default" id="next23">
+                    <div class="panelH panel-heading" id="hTwenty3">
+                        <table class="tableset table">
+                            <tbody>
+                                <tr>
+                                    <td class="nTime"></td>
+                                    <td class="nIcon"></td>
+                                    <td class="nCloud"></td>
+                                    <td class="nTemp"></td>
+                                    <td><a href="#hour23" data-toggle="collapse" data-parent="next23" aria-expanded="false" aria-controls="hour23">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                        </a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="panel-collapse collapse" id="hour23" arialabelledby="hTwenty3">
+                    <div class="panel-body">
+                        <div class="table-responsive">
+                           <table class="table">
+                                <thead class="tablehead">
+                                    <tr>
+                                        <th>Wind</th>
+                                        <th>Humidity</th>
+                                        <th>Visibility</th>
+                                        <th>Pressure</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="nWind"></td>
+                                        <td class="nHum"></td>
+                                        <td class="nVis"></td>
+                                        <td class="nPre"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>  
+                    </div>
+                </div>
+            </div>
+            <div class="panel-group">
+                <div class="panel panel-default" id="next24">
+                    <div class="panelH panel-heading" id="hTwenty4">
+                        <table class="tableset table">
+                            <tbody>
+                                <tr>
+                                    <td class="nTime"></td>
+                                    <td class="nIcon"></td>
+                                    <td class="nCloud"></td>
+                                    <td class="nTemp"></td>
+                                    <td><a href="#hour24" data-toggle="collapse" data-parent="next24" aria-expanded="false" aria-controls="hour24">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                        </a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="panel-collapse collapse" id="hour24" arialabelledby="hTwenty4">
+                    <div class="panel-body">
+                        <div class="table-responsive">
+                           <table class="table">
+                                <thead class="tablehead">
+                                    <tr>
+                                        <th>Wind</th>
+                                        <th>Humidity</th>
+                                        <th>Visibility</th>
+                                        <th>Pressure</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="nWind"></td>
+                                        <td class="nHum"></td>
+                                        <td class="nVis"></td>
+                                        <td class="nPre"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>  
+                    </div>
+                </div>
+            </div>
+            </div>
+            <div role="tabpanel" class="tab-pane" id="nextd">
+            <div class="row">
+            <section id="nextdaysgroup" class="col-xs-12 col-md-10 col-md-offset-1 col-lg-9 col-lg-offset-2">
+            <button type="button" id="day1" class="btn" data-toggle="modal" data-target="#myModal1">
+                <div class="innertext col-xs-12">
+                    <p class="dayday"></p>
+                    <p class="daymonth"></p>
+                    <p class="dayicon"></p>
+                    <p>Min Temp</p>
+                    <p class="daymin"></p>
+                    <p>Max Temp</p>
+                    <p class="daymax"></p>
+                </div>
+            </button>
+            <div id="myModal1" class="modal fade" role="dialog">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title"></h4>
+                  </div>
+                  <div class="modal-body">
+                    <p class="dayiconlg"></p>
+                    <p class="daysumlg">
+                    <span class="daylg"></span>
+                    <span class="sumlg"></span>
+                    </p>
+                      <div class="col-xs-12 col-sm-4">
+                      <table class="tableset2 table borderless">
+                          <tr class="head123">
+                              <td>Sunrise Time</td>
+                          </tr>
+                          <tr>
+                              <td class="daysunrise"></td>
+                          </tr>
+                      </table>
+                      </div>
+                      <div class="col-xs-12 col-sm-4">
+                      <table class="tableset2 table borderless">
+                      <tr class="head123">
+                              <td>Sunset Time</td>
+                          </tr>
+                          <tr>
+                              <td class="daysunset"></td>
+                          </tr>
+                      </table>
+                      </div>
+                      <div class="col-xs-12 col-sm-4">
+                      <table class="tableset2 table borderless">
+                      <tr class="head123">
+                              <td>Humidity</td>
+                          </tr>
+                          <tr>
+                              <td class="dayhum"></td>
+                          </tr>
+                      </table>
+                      </div>
+                      <div class="col-xs-12 col-sm-4">
+                      <table class="tableset2 table borderless">
+                          <tr class="head123">
+                              <td>Wind Speed</td>
+                          </tr>
+                          <tr>
+                              <td class="daywind"></td>
+                          </tr>
+                      </table>
+                      </div>
+                      <div class="col-xs-12 col-sm-4">
+                      <table class="tableset2 table borderless">
+                          <tr class="head123">
+                              <td>Visibility</td>
+                          </tr>
+                          <tr>
+                              <td class="dayvis"></td>
+                          </tr>                                                             </table>
+                      </div>
+                      <div class="col-xs-12 col-sm-4">
+                      <table class="tableset2 table borderless">
+                          <tr class="head123">
+                              <td>Pressure</td>
+                          </tr>
+                          <tr>
+                              <td class="daypre"></td>
+                          </tr>                       
+                      </table>
+                      </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <button type="button" id="day2" class="btn" data-toggle="modal" data-target="#myModal2">
+                <div class="innertext col-xs-12">
+                    <p class="dayday"></p>
+                    <p class="daymonth"></p>
+                    <p class="dayicon"></p>
+                    <p>Min Temp</p>
+                    <p class="daymin"></p>
+                    <p>Max Temp</p>
+                    <p class="daymax"></p>
+                </div>
+            </button>
+            <div id="myModal2" class="modal fade" role="dialog">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title"></h4>
+                  </div>
+                  <div class="modal-body">
+                    <p class="dayiconlg"></p>
+                    <p class="daysumlg">
+                    <span class="daylg"></span>
+                    <span class="sumlg"></span>
+                    </p>
+                      <div class="col-xs-12 col-sm-4">
+                      <table class="tableset2 table borderless">
+                          <tr class="head123">
+                              <td>Sunrise Time</td>
+                          </tr>
+                          <tr>
+                              <td class="daysunrise"></td>
+                          </tr>
+                      </table>
+                      </div>
+                      <div class="col-xs-12 col-sm-4">
+                      <table class="tableset2 table borderless">
+                      <tr class="head123">
+                              <td>Sunset Time</td>
+                          </tr>
+                          <tr>
+                              <td class="daysunset"></td>
+                          </tr>
+                      </table>
+                      </div>
+                      <div class="col-xs-12 col-sm-4">
+                      <table class="tableset2 table borderless">
+                      <tr class="head123">
+                              <td>Humidity</td>
+                          </tr>
+                          <tr>
+                              <td class="dayhum"></td>
+                          </tr>
+                      </table>
+                      </div>
+                      <div class="col-xs-12 col-sm-4">
+                      <table class="tableset2 table borderless">
+                          <tr class="head123">
+                              <td>Wind Speed</td>
+                          </tr>
+                          <tr>
+                              <td class="daywind"></td>
+                          </tr>
+                      </table>
+                      </div>
+                      <div class="col-xs-12 col-sm-4">
+                      <table class="tableset2 table borderless">
+                          <tr class="head123">
+                              <td>Visibility</td>
+                          </tr>
+                          <tr>
+                              <td class="dayvis"></td>
+                          </tr>                                                             </table>
+                      </div>
+                      <div class="col-xs-12 col-sm-4">
+                      <table class="tableset2 table borderless">
+                          <tr class="head123">
+                              <td>Pressure</td>
+                          </tr>
+                          <tr>
+                              <td class="daypre"></td>
+                          </tr>                       
+                      </table>
+                      </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <button type="button" id="day3" class="btn" data-toggle="modal" data-target="#myModal3">
+                <div class="innertext col-xs-12">
+                    <p class="dayday"></p>
+                    <p class="daymonth"></p>
+                    <p class="dayicon"></p>
+                    <p>Min Temp</p>
+                    <p class="daymin"></p>
+                    <p>Max Temp</p>
+                    <p class="daymax"></p>
+                </div>
+            </button>
+            <div id="myModal3" class="modal fade" role="dialog">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title"></h4>
+                  </div>
+                  <div class="modal-body">
+                    <p class="dayiconlg"></p>
+                    <p class="daysumlg">
+                    <span class="daylg"></span>
+                    <span class="sumlg"></span>
+                    </p>
+                      <div class="col-xs-12 col-sm-4">
+                      <table class="tableset2 table borderless">
+                          <tr class="head123">
+                              <td>Sunrise Time</td>
+                          </tr>
+                          <tr>
+                              <td class="daysunrise"></td>
+                          </tr>
+                      </table>
+                      </div>
+                      <div class="col-xs-12 col-sm-4">
+                      <table class="tableset2 table borderless">
+                      <tr class="head123">
+                              <td>Sunset Time</td>
+                          </tr>
+                          <tr>
+                              <td class="daysunset"></td>
+                          </tr>
+                      </table>
+                      </div>
+                      <div class="col-xs-12 col-sm-4">
+                      <table class="tableset2 table borderless">
+                      <tr class="head123">
+                              <td>Humidity</td>
+                          </tr>
+                          <tr>
+                              <td class="dayhum"></td>
+                          </tr>
+                      </table>
+                      </div>
+                      <div class="col-xs-12 col-sm-4">
+                      <table class="tableset2 table borderless">
+                          <tr class="head123">
+                              <td>Wind Speed</td>
+                          </tr>
+                          <tr>
+                              <td class="daywind"></td>
+                          </tr>
+                      </table>
+                      </div>        
+                      <div class="col-xs-12 col-sm-4">
+                      <table class="tableset2 table borderless">
+                          <tr class="head123">
+                              <td>Visibility</td>
+                          </tr>
+                          <tr>
+                              <td class="dayvis"></td>
+                          </tr>                                                             </table>
+                      </div>
+                      <div class="col-xs-12 col-sm-4">
+                      <table class="tableset2 table borderless">
+                          <tr class="head123">
+                              <td>Pressure</td>
+                          </tr>
+                          <tr>
+                              <td class="daypre"></td>
+                          </tr>                       
+                      </table>
+                      </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <button type="button" id="day4" class="btn" data-toggle="modal" data-target="#myModal4">
+                <div class="innertext col-xs-12">
+                    <p class="dayday"></p>
+                    <p class="daymonth"></p>
+                    <p class="dayicon"></p>
+                    <p>Min Temp</p>
+                    <p class="daymin"></p>
+                    <p>Max Temp</p>
+                    <p class="daymax"></p>
+                </div>
+            </button>
+            <div id="myModal4" class="modal fade" role="dialog">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title"></h4>
+                  </div>
+                  <div class="modal-body">
+                    <p class="dayiconlg"></p>
+                    <p class="daysumlg">
+                    <span class="daylg"></span>
+                    <span class="sumlg"></span>
+                    </p>
+                      <div class="col-xs-12 col-sm-4">
+                      <table class="tableset2 table borderless">
+                          <tr class="head123">
+                              <td>Sunrise Time</td>
+                          </tr>
+                          <tr>
+                              <td class="daysunrise"></td>
+                          </tr>
+                      </table>
+                      </div>
+                      <div class="col-xs-12 col-sm-4">
+                      <table class="tableset2 table borderless">
+                      <tr class="head123">
+                              <td>Sunset Time</td>
+                          </tr>
+                          <tr>
+                              <td class="daysunset"></td>
+                          </tr>
+                      </table>
+                      </div>
+                      <div class="col-xs-12 col-sm-4">
+                      <table class="tableset2 table borderless">
+                      <tr class="head123">
+                              <td>Humidity</td>
+                          </tr>
+                          <tr>
+                              <td class="dayhum"></td>
+                          </tr>
+                      </table>
+                      </div>
+                      <div class="col-xs-12 col-sm-4">
+                      <table class="tableset2 table borderless">
+                          <tr class="head123">
+                              <td>Wind Speed</td>
+                          </tr>
+                          <tr>
+                              <td class="daywind"></td>
+                          </tr>
+                      </table>
+                      </div>
+                      <div class="col-xs-12 col-sm-4">
+                      <table class="tableset2 table borderless">
+                          <tr class="head123">
+                              <td>Visibility</td>
+                          </tr>
+                          <tr>
+                              <td class="dayvis"></td>
+                          </tr>                                                             </table>
+                      </div>
+                      <div class="col-xs-12 col-sm-4">
+                      <table class="tableset2 table borderless">
+                          <tr class="head123">
+                              <td>Pressure</td>
+                          </tr>
+                          <tr>
+                              <td class="daypre"></td>
+                          </tr>                       
+                      </table>
+                      </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <button type="button" id="day5" class="btn" data-toggle="modal" data-target="#myModal5">
+                <div class="innertext col-xs-12">
+                    <p class="dayday"></p>
+                    <p class="daymonth"></p>
+                    <p class="dayicon"></p>
+                    <p>Min Temp</p>
+                    <p class="daymin"></p>
+                    <p>Max Temp</p>
+                    <p class="daymax"></p>
+                </div>
+            </button>
+            <div id="myModal5" class="modal fade" role="dialog">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title"></h4>
+                  </div>
+                  <div class="modal-body">
+                    <p class="dayiconlg"></p>
+                    <p class="daysumlg">
+                    <span class="daylg"></span>
+                    <span class="sumlg"></span>
+                    </p>
+                      <div class="col-xs-12 col-sm-4">
+                      <table class="tableset2 table borderless">
+                          <tr class="head123">
+                              <td>Sunrise Time</td>
+                          </tr>
+                          <tr>
+                              <td class="daysunrise"></td>
+                          </tr>
+                      </table>
+                      </div>
+                      <div class="col-xs-12 col-sm-4">
+                      <table class="tableset2 table borderless">
+                      <tr class="head123">
+                              <td>Sunset Time</td>
+                          </tr>
+                          <tr>
+                              <td class="daysunset"></td>
+                          </tr>
+                      </table>
+                      </div>
+                      <div class="col-xs-12 col-sm-4">
+                      <table class="tableset2 table borderless">
+                      <tr class="head123">
+                              <td>Humidity</td>
+                          </tr>
+                          <tr>
+                              <td class="dayhum"></td>
+                          </tr>
+                      </table>
+                      </div>
+                      <div class="col-xs-12 col-sm-4">
+                      <table class="tableset2 table borderless">
+                          <tr class="head123">
+                              <td>Wind Speed</td>
+                          </tr>
+                          <tr>
+                              <td class="daywind"></td>
+                          </tr>
+                      </table>
+                      </div>
+                      <div class="col-xs-12 col-sm-4">
+                      <table class="tableset2 table borderless">
+                          <tr class="head123">
+                              <td>Visibility</td>
+                          </tr>
+                          <tr>
+                              <td class="dayvis"></td>
+                          </tr>                                                             </table>
+                      </div>
+                      <div class="col-xs-12 col-sm-4">
+                      <table class="tableset2 table borderless">
+                          <tr class="head123">
+                              <td>Pressure</td>
+                          </tr>
+                          <tr>
+                              <td class="daypre"></td>
+                          </tr>                       
+                      </table>
+                      </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <button type="button" id="day6" class="btn" data-toggle="modal" data-target="#myModal6">
+                <div class="innertext col-xs-12">
+                    <p class="dayday"></p>
+                    <p class="daymonth"></p>
+                    <p class="dayicon"></p>
+                    <p>Min Temp</p>
+                    <p class="daymin"></p>
+                    <p>Max Temp</p>
+                    <p class="daymax"></p>
+                </div>
+            </button>
+            <div id="myModal6" class="modal fade" role="dialog">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title"></h4>
+                  </div>
+                  <div class="modal-body">
+                    <p class="dayiconlg"></p>
+                    <p class="daysumlg">
+                    <span class="daylg"></span>
+                    <span class="sumlg"></span>
+                    </p>
+                      <div class="col-xs-12 col-sm-4">
+                      <table class="tableset2 table borderless">
+                          <tr class="head123">
+                              <td>Sunrise Time</td>
+                          </tr>
+                          <tr>
+                              <td class="daysunrise"></td>
+                          </tr>
+                      </table>
+                      </div>
+                      <div class="col-xs-12 col-sm-4">
+                      <table class="tableset2 table borderless">
+                      <tr class="head123">
+                              <td>Sunset Time</td>
+                          </tr>
+                          <tr>
+                              <td class="daysunset"></td>
+                          </tr>
+                      </table>
+                      </div>
+                      <div class="col-xs-12 col-sm-4">
+                      <table class="tableset2 table borderless">
+                      <tr class="head123">
+                              <td>Humidity</td>
+                          </tr>
+                          <tr>
+                              <td class="dayhum"></td>
+                          </tr>
+                      </table>
+                      </div>
+                      <div class="col-xs-12 col-sm-4">
+                      <table class="tableset2 table borderless">
+                          <tr class="head123">
+                              <td>Wind Speed</td>
+                          </tr>
+                          <tr>
+                              <td class="daywind"></td>
+                          </tr>
+                      </table>
+                      </div>
+                      <div class="col-xs-12 col-sm-4">
+                      <table class="tableset2 table borderless">
+                          <tr class="head123">
+                              <td>Visibility</td>
+                          </tr>
+                          <tr>
+                              <td class="dayvis"></td>
+                          </tr>                                                             </table>
+                      </div>
+                      <div class="col-xs-12 col-sm-4">
+                      <table class="tableset2 table borderless">
+                          <tr class="head123">
+                              <td>Pressure</td>
+                          </tr>
+                          <tr>
+                              <td class="daypre"></td>
+                          </tr>                       
+                      </table>
+                      </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <button type="button" id="day7" class="btn" data-toggle="modal" data-target="#myModal7">
+                <div class="innertext col-xs-12">
+                    <p class="dayday"></p>
+                    <p class="daymonth"></p>
+                    <p class="dayicon"></p>
+                    <p>Min Temp</p>
+                    <p class="daymin"></p>
+                    <p>Max Temp</p>
+                    <p class="daymax"></p>
+                </div>
+            </button>
+            <div id="myModal7" class="modal fade" role="dialog">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title"></h4>
+                  </div>
+                  <div class="modal-body">
+                    <p class="dayiconlg"></p>
+                    <p class="daysumlg">
+                    <span class="daylg"></span>
+                    <span class="sumlg"></span>
+                    </p>
+                      <div class="col-xs-12 col-sm-4">
+                      <table class="tableset2 table borderless">
+                          <tr class="head123">
+                              <td>Sunrise Time</td>
+                          </tr>
+                          <tr>
+                              <td class="daysunrise"></td>
+                          </tr>
+                      </table>
+                      </div>
+                      <div class="col-xs-12 col-sm-4">
+                      <table class="tableset2 table borderless">
+                      <tr class="head123">
+                              <td>Sunset Time</td>
+                          </tr>
+                          <tr>
+                              <td class="daysunset"></td>
+                          </tr>
+                      </table>
+                      </div>
+                      <div class="col-xs-12 col-sm-4">
+                      <table class="tableset2 table borderless">
+                      <tr class="head123">
+                              <td>Humidity</td>
+                          </tr>
+                          <tr>
+                              <td class="dayhum"></td>
+                          </tr>
+                      </table>
+                      </div>
+                      <div class="col-xs-12 col-sm-4">
+                      <table class="tableset2 table borderless">
+                          <tr class="head123">
+                              <td>Wind Speed</td>
+                          </tr>
+                          <tr>
+                              <td class="daywind"></td>
+                          </tr>
+                      </table>
+                      </div>
+                      <div class="col-xs-12 col-sm-4">
+                      <table class="tableset2 table borderless">
+                          <tr class="head123">
+                              <td>Visibility</td>
+                          </tr>
+                          <tr>
+                              <td class="dayvis"></td>
+                          </tr>                                                             </table>
+                      </div>
+                      <div class="col-xs-12 col-sm-4">
+                      <table class="tableset2 table borderless">
+                          <tr class="head123">
+                              <td>Pressure</td>
+                          </tr>
+                          <tr>
+                              <td class="daypre"></td>
+                          </tr>                       
+                      </table>
+                      </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            </section>
+            </div>
+            </div>
+        </div>
+    </section>
+    </div>
+    </div>
+    </body>
+</html>
